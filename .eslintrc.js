@@ -8,13 +8,14 @@ module.exports = {
     "airbnb/hooks"
   ],
   plugins: [
-    'eslint-plugin'
+    'eslint-plugin',
+    "react"
   ],
   settings: {
-    // "import/extensions": [
-    //   ".jsx",
-    //   ".js",
-    // ],
+    "import/extensions": [
+      ".jsx",
+      ".js",
+    ],
     "import/resolver": {
       "alias": [
         ["components", "./src/components"],
@@ -28,6 +29,7 @@ module.exports = {
     }
   },
   "rules": {
+    "import/no-unresolved": "off",
     "no-extraneous-dependencies": "off",
     "max-len": [
       "warn",

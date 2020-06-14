@@ -12,8 +12,6 @@ const IndexPage = () => {
   return (
     <Layout>
       <SEO title="Home" />
-      {isAuthenticated() ? (<button onClick={logout}>Logout</button>) : (<button onClick={login}>Login</button>)}
-
       <h1>Hi there!</h1>
       <p>Welcome to your PWA boilerplate.</p>
       <div style={{
@@ -22,10 +20,7 @@ const IndexPage = () => {
       >
         <Astronaute />
       </div>
-      <Link to="/profile/">Go to page 2</Link>
-      {' '}
-      <br />
-      <Link to="/Chat/">Go to "Using TypeScript"</Link>
+      <Link to="/app/profile/">Go to page 2</Link>
     </Layout>
   );
 

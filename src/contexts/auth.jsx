@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const getDefaultState = () => {
 
@@ -17,9 +18,11 @@ const getDefaultState = () => {
       JSON.parse(localStorage.getItem('auth:expires_at') || '0')
     );
 
-    const token = JSON.parse(localStorage.getItem('auth:token') || null);
+    const token = JSON.parse(localStorage.getItem('auth:token') || '""');
 
     if (token && expiresAt > new Date()) {
+
+      // TODO validate token api call
 
       storedState = {
         user           : JSON.parse(localStorage.getItem('auth:user') || '{}'),
@@ -57,6 +60,10 @@ const AuthContextProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 
+};
+
+AuthContextProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default AuthContextProvider;
