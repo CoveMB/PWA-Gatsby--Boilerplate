@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "components/*": [
+        "./src/components/*"
+      ],
+      "shared/*": [
+        "./src/components/shared/*"
+      ],
+      "contexts/*": [
+        "./src/contexts/*"
+      ],
+      "hooks/*": [
+        "./src/hooks/*"
+      ],
+      "images/*": [
+        "./src/images/*"
+      ],
+      "sw/*": [
+        "./src/service-worker/*"
+      ],
+      "styles/*": [
+        "./src/styles/*"
+      ]
+    }
+  }
+}

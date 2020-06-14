@@ -1,0 +1,26 @@
+version: "2.4"
+services:
+
+  # Client
+  client:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    container_name: client-${APP_NAME}
+    env_file: .env
+    environment:
+      - GATSBY_TELEMETRY_DISABLED=1
+      - NODE_ENV=development
+    ports:
+      - 80:${PORT}
+      - ${PORT}:${PORT}
+      - 9929:9929
+      - 9230:9230
+    volumes:
+      - ./:/node/app:delegated
+      - /node/app/node_modules
+
+#Volumes
+volumes:
+  postgres:
+  pgadmin:
