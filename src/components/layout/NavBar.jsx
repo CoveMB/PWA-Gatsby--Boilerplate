@@ -6,8 +6,8 @@ import { bodyFont } from 'styles/fonts';
 import PropTypes from 'prop-types';
 import Img from 'gatsby-image';
 import { AuthContext } from 'contexts/auth';
-import LoggedIn from '../auth/LoggedIn';
-import LoggedOut from '../auth/LoggedOut';
+import LoggedIn from 'components/auth/NavLoggedIn';
+import LoggedOut from 'components/auth/NavLoggedOut';
 
 const Header = styled.header`
   height: 50px;

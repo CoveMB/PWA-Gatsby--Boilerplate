@@ -1,48 +1,39 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import axios from 'config/axios-instance';
+
+const initialState = {
+  user           : {},
+  isAuthenticated: false,
+  token          : '',
+};
 
 const getDefaultState = () => {
-
-  const DEFAULT_STATE = {
-    user           : {},
-    isAuthenticated: false,
-    token          : '',
-    expiresAt      : null
-  };
 
   let storedState = {};
 
   if (typeof localStorage !== 'undefined') {
 
-    const expiresAt = new Date(
-      JSON.parse(localStorage.getItem('auth:expires_at') || '0')
-    );
+    const storedAuth = JSON.parse(localStorage.getItem('auth') || '{}');
 
-    const token = JSON.parse(localStorage.getItem('auth:token') || '""');
-
-    if (token && expiresAt > new Date()) {
-
-      // TODO validate token api call
+    if (storedAuth.token && new Date(storedAuth.expiry) > new Date()) {
 
       storedState = {
-        user           : JSON.parse(localStorage.getItem('auth:user') || '{}'),
+        user           : storedAuth.user,
         isAuthenticated: true,
-        token,
-        expiresAt,
+        token          : storedAuth.token
       };
 
-    } else if (token) {
+    } else {
 
-      localStorage.removeItem('auth:user');
-      localStorage.removeItem('auth:token');
-      localStorage.removeItem('auth:expires_at');
+      localStorage.removeItem('auth');
 
     }
 
   }
 
   return {
-    ...DEFAULT_STATE,
+    ...initialState,
     ...storedState
   };
 
@@ -54,8 +45,82 @@ const AuthContextProvider = ({ children }) => {
 
   const [ authState, setAuthState ] = useState(getDefaultState());
 
+  const logOut = async (revoke = false) => {
+
+    if (revoke) {
+
+      await axios({
+        url    : '/logout',
+        method : 'POST',
+        headers: {
+          Authorization: `Bearer ${authState.token}`
+        }
+      });
+
+    }
+
+    localStorage.removeItem('auth');
+    setAuthState(initialState);
+
+  };
+
+  useEffect(() => {
+
+    (async () => {
+
+      try {
+
+        if (authState.token) {
+
+          const check = await axios({
+            url    : '/check-token',
+            method : 'POST',
+            headers: {
+              Authorization: `Bearer ${authState.token}`
+            }
+          });
+
+          if (check.status !== 200) {
+
+            await logOut();
+
+          }
+
+        }
+
+      } catch (error) {
+
+        await logOut();
+
+      }
+
+    })();
+
+  }, []);
+
+  const setToken = ({ user, token }) => {
+
+    const date = new Date();
+
+    const authToStore = {
+      token,
+      user,
+      expiry: new Date(date.setMonth(date.getMonth() + 4))
+    };
+
+    localStorage.setItem('auth', JSON.stringify(authToStore));
+
+    setAuthState({
+      user, token, isAuthenticated: true
+    });
+
+  };
+
   return (
-    <AuthContext.Provider value={authState}>
+    <AuthContext.Provider value={{
+      ...authState, setToken, logOut
+    }}
+    >
       {children}
     </AuthContext.Provider>
   );

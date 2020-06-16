@@ -20,8 +20,6 @@
     "axios": "^0.19.2",
     "babel-plugin-styled-components": "^1.10.7",
     "babel-preset-gatsby": "^0.4.9",
-    "eslint-import-resolver-webpack": "^0.12.1",
-    "eslint-plugin-react": "^7.20.0",
     "gatsby": "^2.22.15",
     "gatsby-cli": "^2.12.45",
     "gatsby-image": "^2.4.5",
@@ -43,8 +41,9 @@
     "react-animated-css": "^1.2.1",
     "react-dom": "^16.12.0",
     "react-helmet": "^6.0.0",
+    "react-hook-form": "^5.7.2",
+    "react-modal": "^3.11.2",
     "react-scroll": "^1.7.16",
-    "react-use-auth": "^0.7.5",
     "styled-components": "^5.1.0"
   },
   "devDependencies": {

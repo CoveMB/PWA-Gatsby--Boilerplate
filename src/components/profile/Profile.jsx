@@ -1,8 +1,11 @@
 import React from 'react';
+import SEO from 'components/layout/seo';
 
 const Profile = () => (
-
-  <h1>PROFILE PAGE</h1>
+  <>
+    <SEO title="Profile" />
+    <h1>PROFILE PAGE</h1>
+  </>
 
 );
 

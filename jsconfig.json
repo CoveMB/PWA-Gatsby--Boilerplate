@@ -8,6 +8,9 @@
       "shared/*": [
         "./src/components/shared/*"
       ],
+      "config/*": [
+        "./src/config/*"
+      ],
       "contexts/*": [
         "./src/contexts/*"
       ],

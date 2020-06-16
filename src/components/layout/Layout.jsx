@@ -4,6 +4,7 @@ import { useStaticQuery, graphql } from 'gatsby';
 import styled, { createGlobalStyle } from 'styled-components';
 import { scrollbar } from 'styles/scrollbar';
 import { bodyFont } from 'styles/fonts';
+import { mainColor } from 'styles/colors';
 import NavBar from './NavBar';
 import PageHeader from './PageHeader';
 
@@ -25,6 +26,13 @@ const GlobalStyle = createGlobalStyle`
 
   a {
     text-decoration: none;
+  }
+
+  input {
+    padding: 10px 10px;
+    border-radius: 5px;
+    border: 1px solid ${mainColor};
+    outline: none
   }
 `;
 

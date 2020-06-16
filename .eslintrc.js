@@ -17,19 +17,13 @@ module.exports = {
       ".js",
     ],
     "import/resolver": {
-      "alias": [
-        ["components", "./src/components"],
-        ["shared", "./src/components/shared"],
-        ["contexts", "./src/contexts"],
-        ["hooks", "./src/hooks"],
-        ["images", "./src/images"],
-        ["sw", "./src/service-worker"],
-        ["styles", "./src/styles"],
-      ]
+      "node": {
+        "extensions": ['.js', '.jsx'],
+        "moduleDirectory": ['node_modules', './src']
+      },
     }
   },
   "rules": {
-    "import/no-unresolved": "off",
     "no-extraneous-dependencies": "off",
     "max-len": [
       "warn",

@@ -3,6 +3,12 @@ FROM node:13-slim
 # Set environnement to development
 ENV NODE_ENV=development
 
+RUN apt update && \
+  apt-get install --no-install-recommends -y \
+  libgl1-mesa-dev \
+  libxi6 \
+  libgconf-2-4
+
 # Change for app directory
 WORKDIR /node/app
 
