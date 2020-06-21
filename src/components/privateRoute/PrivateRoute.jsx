@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
-import React, { useContext } from 'react';
+import { AuthContext } from 'contexts/auth';
 import { navigate } from 'gatsby';
 import PropTypes from 'prop-types';
-import { AuthContext } from 'contexts/auth';
+import React, { useContext } from 'react';
 
 const PrivateRoute = ({ component: Component, location, ...rest }) => {
 
-  const authContext = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
-  if (!authContext.isAuthenticated && location.pathname !== '/login') {
+  if (!isAuthenticated && location.pathname !== '/login') {
 
     navigate('/login');
 

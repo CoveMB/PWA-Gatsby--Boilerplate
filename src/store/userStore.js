@@ -4,11 +4,11 @@ const configureRefStore = () => {
 
   const actions = {
     SET_USER: (currentState, user) => ({
-      ...currentState, ...user
+      ...currentState, user: { ...user }
     }),
   };
 
-  initStore(actions, {});
+  initStore(actions, { user: {} });
 
 };
 

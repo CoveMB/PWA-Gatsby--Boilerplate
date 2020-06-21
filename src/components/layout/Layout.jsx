@@ -1,11 +1,11 @@
-import React from 'react';
+import { graphql, useStaticQuery } from 'gatsby';
 import PropTypes from 'prop-types';
-import { useStaticQuery, graphql } from 'gatsby';
+import React from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
-import { scrollbar } from 'styles/scrollbar';
-import { bodyFont } from 'styles/fonts';
 import { mainColor } from 'styles/colors';
-import NavBar from './NavBar';
+import { bodyFont } from 'styles/fonts';
+import { scrollbar } from 'styles/scrollbar';
+import NavBar from './navBar/NavBar';
 import PageHeader from './PageHeader';
 
 const GlobalStyle = createGlobalStyle`

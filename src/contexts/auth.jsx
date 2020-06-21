@@ -1,27 +1,33 @@
-import React, { createContext, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import axios from 'config/axios-instance';
+import PropTypes from 'prop-types';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
+import { useStore } from 'store/useStore';
 
 const initialState = {
   user           : {},
   isAuthenticated: false,
-  token          : '',
+  authToken      : {
+    token: '', expiration: ''
+  },
 };
 
-const getDefaultState = () => {
+const stateFromLocalStorage = () => {
 
   let storedState = {};
 
   if (typeof localStorage !== 'undefined') {
 
     const storedAuth = JSON.parse(localStorage.getItem('auth') || '{}');
+    const { token, user } = storedAuth;
 
-    if (storedAuth.token && new Date(storedAuth.expiry) > new Date()) {
+    if (token && token.token) {
 
       storedState = {
-        user           : storedAuth.user,
+        user,
         isAuthenticated: true,
-        token          : storedAuth.token
+        authToken      : {
+          token: token.token, expiration: new Date(token.expiration)
+        },
       };
 
     } else {
@@ -39,30 +45,46 @@ const getDefaultState = () => {
 
 };
 
-export const AuthContext = createContext(getDefaultState());
+export const AuthContext = createContext(stateFromLocalStorage());
 
 const AuthContextProvider = ({ children }) => {
 
-  const [ authState, setAuthState ] = useState(getDefaultState());
+  const [ authState, setAuthState ] = useState(stateFromLocalStorage());
+  const dispatch = useStore()[1];
 
-  const logOut = async (revoke = false) => {
+  const setToken = ({ user, token }) => {
+
+    const authToStore = {
+      token,
+      user,
+    };
+
+    localStorage.setItem('auth', JSON.stringify(authToStore));
+
+    setAuthState({
+      authToken: token, isAuthenticated: true
+    });
+
+    dispatch('SET_USER', user);
+
+  };
+
+  const logOut = useCallback(async (token, revoke = false) => {
 
     if (revoke) {
 
       await axios({
-        url    : '/logout',
-        method : 'POST',
-        headers: {
-          Authorization: `Bearer ${authState.token}`
-        }
+        url   : '/logout',
+        method: 'POST',
       });
 
     }
 
     localStorage.removeItem('auth');
     setAuthState(initialState);
+    dispatch('SET_USER', {});
 
-  };
+  }, [ dispatch ]);
 
   useEffect(() => {
 
@@ -70,21 +92,33 @@ const AuthContextProvider = ({ children }) => {
 
       try {
 
-        if (authState.token) {
+        const { authToken, user } = authState;
+        const { token, expiration } = authToken;
+
+        if (token && expiration > new Date()) {
 
           const check = await axios({
             url    : '/check-token',
             method : 'POST',
             headers: {
-              Authorization: `Bearer ${authState.token}`
+              Authorization: `Bearer ${token}`
             }
           });
 
-          if (check.status !== 200) {
+          if (check.status === 200) {
 
-            await logOut();
+            dispatch('SET_USER', user);
+
+          } else {
+
+            await logOut(token);
 
           }
+
+        } else if (expiration
+          && expiration < new Date()) {
+
+          await logOut(token, true);
 
         }
 
@@ -96,25 +130,11 @@ const AuthContextProvider = ({ children }) => {
 
     })();
 
-  }, []);
-
-  const setToken = ({ user, token }) => {
-
-    const date = new Date();
-
-    const authToStore = {
-      token,
-      user,
-      expiry: new Date(date.setMonth(date.getMonth() + 4))
-    };
-
-    localStorage.setItem('auth', JSON.stringify(authToStore));
-
-    setAuthState({
-      user, token, isAuthenticated: true
-    });
-
-  };
+  }, [
+    authState,
+    logOut,
+    dispatch
+  ]);
 
   return (
     <AuthContext.Provider value={{

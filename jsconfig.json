@@ -20,6 +20,9 @@
       "images/*": [
         "./src/images/*"
       ],
+      "store/*": [
+        "./src/store/*"
+      ],
       "sw/*": [
         "./src/service-worker/*"
       ],

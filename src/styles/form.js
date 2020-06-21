@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { errorColor, mainColor } from './colors';
 import { button } from './button';
+import { errorColor, lightColor, mainColor, successColor } from './colors';
 
 export const ErrorFeedBack = styled.div`
   color: ${errorColor};
@@ -8,19 +8,34 @@ export const ErrorFeedBack = styled.div`
   text-align: center
 `;
 
+export const SuccessFeedBack = styled.div`
+color: ${successColor};
+margin-top: 6px;
+text-align: center
+`;
+
 export const Label = styled.label`
 margin: 16px 0 8px 0;
 `;
 
-export const FormTitle = styled.h2`
+export const FormTitle = styled.div`
 text-align: center;
-color: ${mainColor}
+color: ${mainColor};
+width: 100%;
+height: 100%;
+font-size: 1.5em;
+font-weight: bold;
+padding: 14px 0;
+background: ${lightColor};
+${({ active }) => active && `
+    background: white;
+  `}
 `;
 
-export const InputButton = styled.input.attrs({
-  type : 'submit',
-  value: 'Register'
-})`
+export const InputButton = styled.input.attrs(({ value }) => ({
+  type: 'submit',
+  value
+}))`
   ${button}
   margin-top: 20px;
 `;

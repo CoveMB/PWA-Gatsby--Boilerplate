@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { NavLink } from 'styles/links';
-import styled from 'styled-components';
-import { Link } from 'gatsby';
 import { AuthContext } from 'contexts/auth';
+import { Link } from 'gatsby';
+import React, { useContext } from 'react';
+import styled from 'styled-components';
+import { NavLink } from 'styles/links';
 
 const Div = styled.div`
   display: flex;
@@ -10,16 +10,16 @@ const Div = styled.div`
 
 const LoggedIn = () => {
 
-  const { logOut } = useContext(AuthContext);
+  const { logOut, token } = useContext(AuthContext);
 
   return (
     <Div>
-      <Link to="/app/profile/">
+      <Link to="/app/profile">
         <NavLink>
           Profile
         </NavLink>
       </Link>
-      <NavLink onClick={async () => logOut(true)}>
+      <NavLink onClick={async () => logOut(token, true)}>
         Logout
       </NavLink>
     </Div>

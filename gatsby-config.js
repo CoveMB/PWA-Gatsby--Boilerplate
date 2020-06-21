@@ -38,13 +38,6 @@ module.exports = {
       },
     },
     {
-      resolve: 'gatsby-plugin-google-tagmanager',
-      options: {
-        id                  : 'GTM_ID',
-        includeInDevelopment: false,
-      },
-    },
-    {
       resolve: 'gatsby-plugin-offline',
       options: {
         precachePages: [ '//' ],

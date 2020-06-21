@@ -1,13 +1,13 @@
+import LoggedIn from 'components/layout/navBar/NavLoggedIn';
+import LoggedOut from 'components/layout/navBar/NavLoggedOut';
+import { AuthContext } from 'contexts/auth';
+import { graphql, Link, useStaticQuery } from 'gatsby';
+import Img from 'gatsby-image';
+import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import { useStaticQuery, graphql, Link } from 'gatsby';
 import styled, { keyframes } from 'styled-components';
 import { mainColor } from 'styles/colors';
 import { bodyFont } from 'styles/fonts';
-import PropTypes from 'prop-types';
-import Img from 'gatsby-image';
-import { AuthContext } from 'contexts/auth';
-import LoggedIn from 'components/auth/NavLoggedIn';
-import LoggedOut from 'components/auth/NavLoggedOut';
 
 const Header = styled.header`
   height: 50px;
@@ -33,7 +33,7 @@ const Title = styled.h1`
 `;
 
 const spin = keyframes`
-  100% { transform: rotate(360deg);
+100% { transform: rotate(360deg);
 }`;
 
 const Icon = styled.div`
@@ -44,7 +44,7 @@ const Icon = styled.div`
 
 const NavBar = ({ siteTitle }) => {
 
-  const authContext = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const data = useStaticQuery(graphql`
   query {
@@ -73,7 +73,7 @@ const NavBar = ({ siteTitle }) => {
 
         </Link>
         {
-          authContext.isAuthenticated
+          isAuthenticated
             ? <LoggedIn />
             : <LoggedOut />
         }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 let globalState = {};
 let listeners = [];
@@ -8,7 +8,7 @@ export const useStore = (shouldListen = true) => {
 
   const setGlobalState = useState(globalState)[1];
 
-  const dispatch = (actionIdentifier, payload) => {
+  const dispatch = useCallback((actionIdentifier, payload) => {
 
     const newState = actions[actionIdentifier](globalState, payload);
 
@@ -22,7 +22,7 @@ export const useStore = (shouldListen = true) => {
 
     });
 
-  };
+  }, []);
 
   useEffect(() => {
 
@@ -57,6 +57,7 @@ export const initStore = (userActions, initialState) => {
     };
 
   }
+
   actions = {
     ...actions, ...userActions
   };

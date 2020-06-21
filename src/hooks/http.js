@@ -1,5 +1,6 @@
-import { useReducer, useCallback } from 'react';
 import axios from 'config/axios-instance';
+import { AuthContext } from 'contexts/auth';
+import { useCallback, useContext, useReducer } from 'react';
 
 const initialState = {
   loading: false,
@@ -42,11 +43,14 @@ const httpReducer = (curHttpState, action) => {
 const useHttp = () => {
 
   const [ httpState, dispatchHttp ] = useReducer(httpReducer, initialState);
+  const { authToken } = useContext(AuthContext);
 
-  const clear = useCallback(() => dispatchHttp({ type: 'CLEAR' }), []);
+  const clearHttpState = useCallback(() => dispatchHttp({ type: 'CLEAR' }), []);
 
   const sendRequest = useCallback(
-    async ({ url, method, body }) => {
+    async ({
+      url, method, body, headers
+    }) => {
 
       try {
 
@@ -57,7 +61,11 @@ const useHttp = () => {
         const response = await axios({
           method,
           url,
-          data: JSON.stringify(body),
+          data   : JSON.stringify(body),
+          headers: {
+            Authorization: `Bearer ${authToken.token || 'no token'}`,
+            ...headers
+          }
         });
 
         if (response.status >= 400) {
@@ -89,7 +97,7 @@ const useHttp = () => {
 
       }
 
-    }, []
+    }, [ authToken ]
   );
 
   return {
@@ -97,7 +105,7 @@ const useHttp = () => {
     httpData : httpState.data,
     httpError: httpState.error,
     sendRequest,
-    clear
+    clearHttpState
   };
 
 };
