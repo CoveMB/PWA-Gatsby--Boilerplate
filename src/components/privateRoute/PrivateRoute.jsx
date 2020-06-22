@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/require-default-props */
 import { AuthContext } from 'contexts/auth';
 import { navigate } from 'gatsby';
 import PropTypes from 'prop-types';
@@ -22,6 +22,9 @@ const PrivateRoute = ({ component: Component, location, ...rest }) => {
 };
 
 PrivateRoute.propTypes = {
+  location: PropTypes.shape({
+    pathname: PropTypes.string
+  }),
   component: PropTypes.elementType.isRequired
 };
 

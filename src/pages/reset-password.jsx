@@ -2,9 +2,10 @@ import Layout from 'components/layout/Layout';
 import SEO from 'components/layout/seo';
 import Loading from 'components/shared/Loading';
 import { AuthContext } from 'contexts/auth';
+import { navigate } from 'gatsby';
 import useHttp from 'hooks/http';
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { ErrorFeedBack, InputButton, Label } from 'styles/form';
@@ -34,17 +35,17 @@ margin: 8px 5%;
 
 const RestPassword = ({ location }) => {
 
+  const [ errorFeedback, setErrorFeedback ] = useState('');
   const { register, handleSubmit, errors } = useForm();
   const { setToken } = useContext(AuthContext);
-  const {
-    isLoading, httpError, sendRequest, clearHttpState
-  } = useHttp();
+  const { isLoading, sendRequest } = useHttp();
 
-  const storeTokenIfSuccess = (loggedInUser) => {
+  const storeTokenIfSuccess = (resetRequest) => {
 
-    if (loggedInUser && loggedInUser.token) {
+    if (resetRequest && resetRequest.token) {
 
-      setToken(loggedInUser);
+      setToken(resetRequest);
+      navigate('/app/profile');
 
     }
 
@@ -56,7 +57,7 @@ const RestPassword = ({ location }) => {
 
       const token = location.search.replace('?token=', '');
 
-      await sendRequest({
+      const resetRequest = await sendRequest({
         url    : '/reset-password',
         method : 'POST',
         body   : password,
@@ -65,16 +66,19 @@ const RestPassword = ({ location }) => {
         }
       });
 
-    }
+      storeTokenIfSuccess(resetRequest);
+      setErrorFeedback('Your token might have expired, please request a new one');
 
-    // storeTokenIfSuccess(loggedInUser);
+    }
 
   };
 
   return (
     <Layout>
       <SEO title="Password Reset" />
+
       <PageTitle>Reset your password</PageTitle>
+
       <Form onSubmit={handleSubmit(resetPassword)}>
         <Label htmlFor="password">Your new password:</Label>
         <Input
@@ -102,8 +106,8 @@ const RestPassword = ({ location }) => {
       </Form>
 
       <ErrorFeedBack>{errors.password && errors.password.message}</ErrorFeedBack>
+      <ErrorFeedBack>{errorFeedback && errorFeedback}</ErrorFeedBack>
 
-      <ErrorFeedBack>{httpError && httpError}</ErrorFeedBack>
     </Layout>
   );
 

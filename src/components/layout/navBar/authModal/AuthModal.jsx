@@ -100,7 +100,7 @@ const SignUpModal = ({
 
     if (passwordResetResponse.status === 'success') {
 
-      setSuccessFeedBack('An email has been sent to the indicated email');
+      setSuccessFeedBack('A reset password link has been sent to the indicated email');
 
     }
 
