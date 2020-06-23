@@ -1,8 +1,9 @@
 const path = require('path');
 
-// Webpack
+// Webpack config
 exports.onCreateWebpackConfig = ({ actions }) => {
 
+  // Tell webpack where to look when using alias in importing component and more
   actions.setWebpackConfig({
     resolve: {
       alias: {

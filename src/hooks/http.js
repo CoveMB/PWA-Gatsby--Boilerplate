@@ -1,17 +1,20 @@
 import axios from 'config/axios-instance';
 import { AuthContext } from 'contexts/auth';
-import { useCallback, useContext, useReducer } from 'react';
+import { useCallback, useContext, useEffect, useReducer } from 'react';
 
+// Initial state for Component using the http hook
 const initialState = {
   loading: false,
   error  : '',
   data   : {}
 };
 
+// Reducer defining actions
 const httpReducer = (curHttpState, action) => {
 
   switch (action.type) {
 
+    // The request is starting
     case 'SEND':
       return {
         ...curHttpState,
@@ -19,18 +22,24 @@ const httpReducer = (curHttpState, action) => {
         error  : '',
         data   : {}
       };
+
+    // The response came back
     case 'RESPONSE':
       return {
         ...curHttpState,
         loading: false,
         data   : action.responseData
       };
+
+    // An error occurred
     case 'ERROR':
       return {
         ...curHttpState,
         loading: false,
         error  : action.errorMessage
       };
+
+    // Clear the state
     case 'CLEAR':
       return initialState;
     default:
@@ -40,34 +49,68 @@ const httpReducer = (curHttpState, action) => {
 
 };
 
-const useHttp = () => {
+// If initialRequest is passed during initialisation of the hook a request will be made at the render of it's component
+const useHttp = (initialRequest) => {
 
+  // Create a state with reducer
   const [ httpState, dispatchHttp ] = useReducer(httpReducer, initialState);
+
+  // If the AuthContext contains an authToken it will be included in the headers
   const { authToken } = useContext(AuthContext);
 
   const clearHttpState = useCallback(() => dispatchHttp({ type: 'CLEAR' }), []);
 
+  // Defined the fetch method
   const sendRequest = useCallback(
     async ({
-      url, method, body, headers
+
+      // The method accept an url, a method a body and headers to make the request, and if the request is external
+      url, method, body, headers, external = false
     }) => {
 
       try {
+
+        let response;
 
         dispatchHttp({
           type: 'SEND'
         });
 
-        const response = await axios({
-          method,
-          url,
-          data   : JSON.stringify(body),
-          headers: {
-            Authorization: `Bearer ${authToken.token || 'no token'}`,
-            ...headers
-          }
-        });
+        // If the request should be external the external axios instance with no baseurl will be use
+        if (external) {
 
+          // Request is make here with the passed parameter
+          response = await axios.externalInstance({
+            method,
+            url,
+            data   : JSON.stringify(body),
+            headers: {
+
+              // If the AuthContext contains an authToken it will be included in the headers
+              Authorization: `Bearer ${authToken.token || 'no token'}`,
+              ...headers
+            }
+          });
+
+        } else {
+
+          // Request is make here with the passed parameter
+          response = await axios.internalInstance({
+            method,
+            url,
+            data   : JSON.stringify(body),
+            headers: {
+
+              // If the AuthContext contains an authToken it will be included in the headers
+              Authorization: `Bearer ${authToken.token || 'no token'}`,
+              ...headers
+            }
+          });
+
+        }
+
+        // The axios instance is set not to throw an error on status under 500
+        // We can set up custom logic for authentication errors
         if (response.status >= 400) {
 
           dispatchHttp({
@@ -77,6 +120,7 @@ const useHttp = () => {
 
         } else {
 
+          // Make the data available to the Component
           dispatchHttp({
             type        : 'RESPONSE',
             responseData: response.data
@@ -84,13 +128,15 @@ const useHttp = () => {
 
         }
 
+        // Return the requested data
         return response.data;
 
       } catch (error) {
 
+        // Make error available to Component
         dispatchHttp({
           type        : 'ERROR',
-          errorMessage: 'Something went wrong!'
+          errorMessage: 'Oups, something went wrong!'
         });
 
         return error;
@@ -99,6 +145,17 @@ const useHttp = () => {
 
     }, [ authToken ]
   );
+
+  useEffect(() => {
+
+    // If initialRequest is passed during initialisation of the hook a request will be made at the render of it's component
+    if (initialRequest) {
+
+      sendRequest(initialRequest);
+
+    }
+
+  }, [ sendRequest ]);
 
   return {
     isLoading: httpState.loading,

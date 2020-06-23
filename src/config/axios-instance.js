@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const axiosInstance = axios.create({
+// Instantiate axios instance with backend of the app as default baseUrl
+const internalInstance = axios.create({
   baseURL: process.env.GATSBY_API_ENDPOINT,
   headers: {
     'Content-Type': 'application/json'
@@ -12,4 +13,19 @@ const axiosInstance = axios.create({
   },
 });
 
-export default axiosInstance;
+// Instantiate axios instance with backend of the app as default baseUrl
+const externalInstance = axios.create({
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  validateStatus(status) {
+
+    return status >= 200 && status < 500;
+
+  },
+});
+
+export default {
+  internalInstance,
+  externalInstance
+};

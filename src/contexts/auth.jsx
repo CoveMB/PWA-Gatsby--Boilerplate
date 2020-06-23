@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { useStore } from 'store/useStore';
 
+// Initial auth context
 const initialState = {
   user           : {},
   isAuthenticated: false,
@@ -11,6 +12,7 @@ const initialState = {
   },
 };
 
+//  Launching the app we get eventual tokens stored in local storage
 const stateFromLocalStorage = () => {
 
   let storedState = {};

@@ -67,9 +67,10 @@ const RestPassword = ({ location }) => {
       });
 
       storeTokenIfSuccess(resetRequest);
-      setErrorFeedback('Your token might have expired, please request a new one');
 
     }
+
+    setErrorFeedback('Your token might have expired, please request a new one');
 
   };
 

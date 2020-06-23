@@ -1,5 +1,6 @@
 import { initStore } from './useStore';
 
+// Configure here actions for user store
 const configureRefStore = () => {
 
   const actions = {
@@ -8,6 +9,7 @@ const configureRefStore = () => {
     }),
   };
 
+  // Configure here initial state for the store
   initStore(actions, { user: {} });
 
 };
