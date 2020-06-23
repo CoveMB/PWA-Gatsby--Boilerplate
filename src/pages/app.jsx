@@ -4,6 +4,7 @@ import PrivateRoute from 'components/privateRoute/PrivateRoute';
 import Profile from 'components/profile/Profile';
 import React from 'react';
 
+// Define the routes of the app, those routes will be the ones protected under authentication
 const App = () => (
   <Layout>
     <Router basepath="/app">

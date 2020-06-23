@@ -1,5 +1,5 @@
 import Layout from 'components/layout/Layout';
-import SEO from 'components/layout/seo';
+import SEO from 'components/layout/Seo';
 import Loading from 'components/shared/Loading';
 import { AuthContext } from 'contexts/auth';
 import { navigate } from 'gatsby';
@@ -44,7 +44,10 @@ const RestPassword = ({ location }) => {
 
     if (resetRequest && resetRequest.token) {
 
+      // Set the new token
       setToken(resetRequest);
+
+      // Navigate to profile page
       navigate('/app/profile');
 
     }
@@ -53,10 +56,13 @@ const RestPassword = ({ location }) => {
 
   const resetPassword = async (password) => {
 
+    // The token should be located in the params of the url
     if (location.search.includes('?token=')) {
 
+      // Get the token
       const token = location.search.replace('?token=', '');
 
+      // Send a request to change the password with the new password
       const resetRequest = await sendRequest({
         url    : '/reset-password',
         method : 'POST',
@@ -66,10 +72,12 @@ const RestPassword = ({ location }) => {
         }
       });
 
+      // If the request is successful the the new token
       storeTokenIfSuccess(resetRequest);
 
     }
 
+    // Is something went wrong the token might have expired
     setErrorFeedback('Your token might have expired, please request a new one');
 
   };

@@ -1,4 +1,4 @@
-import SEO from 'components/layout/seo';
+import SEO from 'components/layout/Seo';
 import React from 'react';
 import { useStore } from 'store/useStore';
 import { PageTitle } from 'styles/texts';
