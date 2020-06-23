@@ -38,7 +38,7 @@ const RestPassword = ({ location }) => {
   const [ errorFeedback, setErrorFeedback ] = useState('');
   const { register, handleSubmit, errors } = useForm();
   const { setToken } = useContext(AuthContext);
-  const { isLoading, sendRequest } = useHttp();
+  const { isLoading, sendRequest } = useHttp({ url: 'test' });
 
   const storeTokenIfSuccess = (resetRequest) => {
 

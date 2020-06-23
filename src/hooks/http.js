@@ -155,7 +155,7 @@ const useHttp = (initialRequest) => {
 
     }
 
-  }, [ sendRequest ]);
+  }, []);
 
   return {
     isLoading: httpState.loading,
