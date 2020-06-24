@@ -53,58 +53,8 @@ const SignUpModal = ({
     isLoading, httpError, sendRequest, clearHttpState
   } = useHttp();
   const [ successFeedBack, setSuccessFeedBack ] = useState('');
-  const { setToken } = useContext(AuthContext);
+  const { logIn } = useContext(AuthContext);
   const { SIGNUP, LOGIN, PASSWORD_RESET } = actions;
-
-  const storeTokenIfSuccess = (loggedInUser) => {
-
-    if (loggedInUser && loggedInUser.token) {
-
-      setToken(loggedInUser);
-
-    }
-
-  };
-
-  const loginUser = async (userInfo) => {
-
-    const loggedInUser = await sendRequest({
-      url: '/login', method: 'POST', body: userInfo
-    });
-
-    storeTokenIfSuccess(loggedInUser);
-
-  };
-
-  const registerNewUser = async (userInfo) => {
-
-    const { email, password } = userInfo;
-
-    const userData = {
-      email, password
-    };
-
-    const signedUser = await sendRequest({
-      url: '/users', method: 'POST', body: userData
-    });
-
-    storeTokenIfSuccess(signedUser);
-
-  };
-
-  const passwordResetRequest = async (userInfo) => {
-
-    const passwordResetResponse = await sendRequest({
-      url: '/request-password-reset', method: 'POST', body: userInfo
-    });
-
-    if (passwordResetResponse.status === 'success') {
-
-      setSuccessFeedBack('A reset password link has been sent to the indicated email');
-
-    }
-
-  };
 
   const closeAuthModal = () => {
 
@@ -113,6 +63,61 @@ const SignUpModal = ({
 
   };
 
+  // If the request is successful set the the new token and user
+  const storeTokenIfSuccess = ({ data, status }) => {
+
+    if (status === 200) {
+
+      logIn(data);
+
+    }
+
+  };
+
+  const loginUser = async (userInfo) => {
+
+    // Send logIn request
+    const loginResponse = await sendRequest({
+      url: '/login', method: 'POST', body: userInfo
+    });
+
+    // If the request is successful set the the new token and user
+    storeTokenIfSuccess(loginResponse);
+
+  };
+
+  const registerNewUser = async ({ email, password }) => {
+
+    // Send register request
+    const registerResponse = await sendRequest({
+      url   : '/users',
+      method: 'POST',
+      body  : {
+        email, password
+      }
+    });
+
+    // If the request is successful set the the new token and user
+    storeTokenIfSuccess(registerResponse);
+
+  };
+
+  const passwordResetRequest = async (userInfo) => {
+
+    // Send reset password request
+    const { status } = await sendRequest({
+      url: '/request-password-reset', method: 'POST', body: userInfo
+    });
+
+    if (status === 200) {
+
+      setSuccessFeedBack('A reset password link has been sent to the indicated email');
+
+    }
+
+  };
+
+  // Change auth action depending of click in form header
   const switchAuthAction = (newAction) => {
 
     setAuthAction({
@@ -122,6 +127,7 @@ const SignUpModal = ({
 
   };
 
+  // Control auth action on the submit
   const submitAuthAction = (formData) => {
 
     switch (authAction) {
@@ -143,6 +149,7 @@ const SignUpModal = ({
 
   };
 
+  // Control the text in the submit button
   const getSubmitBtnText = () => {
 
     switch (authAction) {
@@ -184,6 +191,7 @@ const SignUpModal = ({
       <form onSubmit={handleSubmit(submitAuthAction)}>
         <Div>
 
+          {/* email input */}
           <Label htmlFor="email">Email:</Label>
           <input
             name="email"
@@ -196,8 +204,10 @@ const SignUpModal = ({
               },
             })}
           />
+          {/* Error feedback for email */}
           <ErrorFeedBack>{errors.email && errors.email.message}</ErrorFeedBack>
 
+          {/* If the auth action is signup or login add a password input */}
           {(authAction === SIGNUP || authAction === LOGIN)
           && (
             <>
@@ -222,6 +232,7 @@ const SignUpModal = ({
             </>
           )}
 
+          {/* If the auth action is signup add a password validation input */}
           {authAction === SIGNUP && (
             <>
               <Label htmlFor="passwordRepeat">Repeat Password:</Label>
@@ -243,6 +254,7 @@ const SignUpModal = ({
             </>
           ) }
 
+          {/* If the auth action is login ass a password reset option */}
           {authAction === LOGIN && (
             <>
               <PasswordResetRequest onClick={() => switchAuthAction(PASSWORD_RESET)}>Forgot your password ? </PasswordResetRequest>

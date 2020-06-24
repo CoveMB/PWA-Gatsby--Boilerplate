@@ -4,6 +4,7 @@ import Astronaute from 'components/shared/Astronaute';
 import { Link } from 'gatsby';
 import React from 'react';
 
+// The home page
 const IndexPage = () => (
   <Layout>
     <SEO title="Home" />

@@ -5,7 +5,7 @@ import { AuthContext } from 'contexts/auth';
 import { navigate } from 'gatsby';
 import useHttp from 'hooks/http';
 import PropTypes from 'prop-types';
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 import { ErrorFeedBack, InputButton, Label } from 'styles/form';
@@ -35,22 +35,17 @@ margin: 8px 5%;
 
 const RestPassword = ({ location }) => {
 
-  const [ errorFeedback, setErrorFeedback ] = useState('');
   const { register, handleSubmit, errors } = useForm();
-  const { setToken } = useContext(AuthContext);
-  const { isLoading, sendRequest } = useHttp({ url: 'test' });
+  const { logIn } = useContext(AuthContext);
+  const { isLoading, sendRequest, httpError } = useHttp();
 
-  const storeTokenIfSuccess = (resetRequest) => {
+  const storeTokenAndNavigate = (resetRequest) => {
 
-    if (resetRequest && resetRequest.token) {
+    // Set the new token
+    logIn(resetRequest);
 
-      // Set the new token
-      setToken(resetRequest);
-
-      // Navigate to profile page
-      navigate('/app/profile');
-
-    }
+    // Navigate to profile page
+    navigate('/app/profile');
 
   };
 
@@ -63,7 +58,7 @@ const RestPassword = ({ location }) => {
       const token = location.search.replace('?token=', '');
 
       // Send a request to change the password with the new password
-      const resetRequest = await sendRequest({
+      const { data, status } = await sendRequest({
         url    : '/reset-password',
         method : 'POST',
         body   : password,
@@ -72,13 +67,14 @@ const RestPassword = ({ location }) => {
         }
       });
 
-      // If the request is successful the the new token
-      storeTokenIfSuccess(resetRequest);
+      if (status === 200) {
+
+        // If the request is successful the the new token
+        storeTokenAndNavigate(data);
+
+      }
 
     }
-
-    // Is something went wrong the token might have expired
-    setErrorFeedback('Your token might have expired, please request a new one');
 
   };
 
@@ -115,7 +111,7 @@ const RestPassword = ({ location }) => {
       </Form>
 
       <ErrorFeedBack>{errors.password && errors.password.message}</ErrorFeedBack>
-      <ErrorFeedBack>{errorFeedback && errorFeedback}</ErrorFeedBack>
+      <ErrorFeedBack>{httpError && httpError}</ErrorFeedBack>
 
     </Layout>
   );

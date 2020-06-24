@@ -60,13 +60,28 @@ const useHttp = (initialRequest) => {
 
   const clearHttpState = useCallback(() => dispatchHttp({ type: 'CLEAR' }), []);
 
+  const executeRequest = async ({
+
+    // The method accept an url, a method a body and headers to make the request, and the axios instance type
+    url, method, body, headers
+  }, axiosInstance, token) => axios[axiosInstance]({
+    method,
+    url,
+    data   : JSON.stringify(body),
+    headers: {
+
+      // If the AuthContext contains an authToken it will be included in the headers
+      Authorization: `Bearer ${token || 'no token'}`,
+      ...headers
+    }
+  });
+
   // Defined the fetch method
   const sendRequest = useCallback(
-    async ({
 
-      // The method accept an url, a method a body and headers to make the request, and if the request is external
-      url, method, body, headers, external = false
-    }) => {
+    // The method accept an url, a method a body and headers to make the request, and if the request is external
+    async (requestParameters, external = false
+    ) => {
 
       try {
 
@@ -79,38 +94,17 @@ const useHttp = (initialRequest) => {
         // If the request should be external the external axios instance with no baseurl will be use
         if (external) {
 
-          // Request is make here with the passed parameter
-          response = await axios.externalInstance({
-            method,
-            url,
-            data   : JSON.stringify(body),
-            headers: {
-
-              // If the AuthContext contains an authToken it will be included in the headers
-              Authorization: `Bearer ${authToken.token || 'no token'}`,
-              ...headers
-            }
-          });
+          // Request is make here with the passed parameter with the external axios instance that do not have a base url
+          response = await executeRequest(requestParameters, 'externalInstance', authToken.token);
 
         } else {
 
-          // Request is make here with the passed parameter
-          response = await axios.internalInstance({
-            method,
-            url,
-            data   : JSON.stringify(body),
-            headers: {
-
-              // If the AuthContext contains an authToken it will be included in the headers
-              Authorization: `Bearer ${authToken.token || 'no token'}`,
-              ...headers
-            }
-          });
+          // Request is make here with the passed parameter with the internal axios instance that has a base url of the app backend
+          response = await executeRequest(requestParameters, 'internalInstance', authToken.token);
 
         }
 
-        // The axios instance is set not to throw an error on status under 500
-        // We can set up custom logic for authentication errors
+        // We can set up custom logic for authentication errors from our api endpoints external api call will throw an error on a response code superior to 400
         if (response.status >= 400) {
 
           dispatchHttp({
@@ -118,9 +112,9 @@ const useHttp = (initialRequest) => {
             errorMessage: response.data.message
           });
 
-        } else {
+        } else if (response.status < 400) {
 
-          // Make the data available to the Component
+          // The request was successful, the data is made available to the Component
           dispatchHttp({
             type        : 'RESPONSE',
             responseData: response.data
@@ -128,15 +122,15 @@ const useHttp = (initialRequest) => {
 
         }
 
-        // Return the requested data
-        return response.data;
+        // Return the response
+        return response;
 
       } catch (error) {
 
         // Make error available to Component
         dispatchHttp({
           type        : 'ERROR',
-          errorMessage: 'Oups, something went wrong!'
+          errorMessage: 'Oups, something went wrong'
         });
 
         return error;

@@ -6,6 +6,8 @@ const internalInstance = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
+
+  // For the internal api call we dont want to throw error on 400's errors
   validateStatus(status) {
 
     return status >= 200 && status < 500;
@@ -18,9 +20,11 @@ const externalInstance = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
+
+  // For the external api call we throw error on any error code superior to 400
   validateStatus(status) {
 
-    return status >= 200 && status < 500;
+    return status >= 200 && status < 400;
 
   },
 });

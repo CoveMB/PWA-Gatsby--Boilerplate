@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { NavLink } from 'styles/links';
-import SignUpModal from './authModal/AuthModal';
+import AuthModal from './authModal/AuthModal';
 
 const Div = styled.div`
   display: flex;
 `;
 
+// The navbar shown if you are logged out
 const LoggedOut = () => {
 
   const [ userAuthAction, setUserAuthAction ] = useState({ authModalOpen: false });
@@ -24,7 +25,7 @@ const LoggedOut = () => {
       >
         Register
       </NavLink>
-      <SignUpModal
+      <AuthModal
         setAuthAction={setUserAuthAction}
         authModalOpen={
           userAuthAction.authModalOpen

@@ -8,6 +8,7 @@ const Div = styled.div`
   display: flex;
 `;
 
+// The navbar shown if you are logged in
 const LoggedIn = () => {
 
   const { logOut, token } = useContext(AuthContext);
