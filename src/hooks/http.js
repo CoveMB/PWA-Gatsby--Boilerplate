@@ -67,7 +67,7 @@ const useHttp = (initialRequest) => {
   }, axiosInstance, token) => axios[axiosInstance]({
     method,
     url,
-    data   : JSON.stringify(body),
+    data   : body,
     headers: {
 
       // If the AuthContext contains an authToken it will be included in the headers

@@ -59,20 +59,23 @@ const AuthContextProvider = ({ children }) => {
   const [ authState, setAuthState ] = useState(stateFromLocalStorage());
   const dispatch = useStore()[1];
 
-  const updateStateAndStore = (user, { token, expiration }) => {
+  const updateStateAndStore = useCallback((user, newAuthState = false) => {
 
-    // Set the auth state
-    setAuthState({
-      authToken: {
-        token, expiration: new Date(expiration)
-      },
-      isAuthenticated: true
-    });
+    if (newAuthState) {
 
-    // Set the user un the app store
-    dispatch('SET_USER', user);
+      // Set the auth state
+      setAuthState(newAuthState);
 
-  };
+    }
+
+    if (user) {
+
+      // Set the user un the app store
+      dispatch('SET_USER', user);
+
+    }
+
+  }, [ dispatch ]);
 
   const setToken = ({ user, token }) => {
 
@@ -84,6 +87,13 @@ const AuthContextProvider = ({ children }) => {
 
   };
 
+  const unsetToken = () => {
+
+    // Remove token from local storage
+    localStorage.removeItem('auth');
+
+  };
+
   // Set token will store the token and user in local storage and set the state and app store
   const logIn = ({ user, token }) => {
 
@@ -92,32 +102,42 @@ const AuthContextProvider = ({ children }) => {
     });
 
     // Update state of the app
-    updateStateAndStore(user, token);
+    updateStateAndStore(user, {
+      authToken: {
+        token: token.token, expiration: new Date(token.expiration)
+      },
+      isAuthenticated: true
+    });
 
   };
 
-  // Log out will remove tokens in the local storage eventually revoking in in the back end as well
-  const logOut = useCallback(async (token, revoke = false) => {
+  // Log out will can logout user from the app and revoke a token in the backend
+  const logOut = useCallback(async ({ tokenToRevoke, logOutUser, authToken }) => {
 
-    if (revoke) {
+    if (tokenToRevoke) {
 
       await axios.internalInstance({
-        url   : '/logout',
-        method: 'POST',
+        url    : '/logout',
+        method : 'POST',
+        data   : { token: tokenToRevoke },
+        headers: {
+          Authorization: `Bearer ${authToken || tokenToRevoke}`,
+        }
       });
 
     }
 
-    // Remove data from local storage
-    localStorage.removeItem('auth');
+    if (logOutUser) {
 
-    // Set the auth state back to it's original state
-    setAuthState(initialState);
+      // Remove token from local storage
+      unsetToken();
 
-    // Remove user from the state
-    dispatch('SET_USER', {});
+      // Update state of the app
+      updateStateAndStore({}, initialState);
 
-  }, [ dispatch ]);
+    }
+
+  }, [ updateStateAndStore ]);
 
   // At the beginning og the app we revalidate the token, in case it may have had expired
   useEffect(() => {
@@ -144,19 +164,22 @@ const AuthContextProvider = ({ children }) => {
           if (check.status === 200) {
 
             // If it is okay we can load the user to the store
-            dispatch('SET_USER', user);
+            updateStateAndStore(user);
 
           } else {
 
             // Else the token was not valid so we log the user out
-            await logOut(token);
+            await logOut({ logOutUser: true });
 
           }
 
         } else {
 
-          // Else the token is invalid or expired so we log the user out
-          await logOut(token);
+          // Else the token expired so we log the user out
+          await logOut({
+            logOutUser   : true,
+            tokenToRevoke: token
+          });
 
         }
 
@@ -169,6 +192,7 @@ const AuthContextProvider = ({ children }) => {
     })();
 
   }, [
+    updateStateAndStore,
     authState,
     logOut,
     dispatch
