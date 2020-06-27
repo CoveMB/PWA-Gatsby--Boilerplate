@@ -114,19 +114,27 @@ const AuthContextProvider = ({ children }) => {
   // Log out will can logout user from the app and revoke a token in the backend
   const logOut = useCallback(async ({ tokenToRevoke, logOutUser, authToken }) => {
 
+    // If a token to revoke is pass to the function it will be send to the backend
     if (tokenToRevoke) {
 
       await axios.internalInstance({
-        url    : '/logout',
-        method : 'POST',
+        url   : '/logout',
+        method: 'POST',
+
+        // The token to be revoked is ent
         data   : { token: tokenToRevoke },
         headers: {
+
+          // The endpoint is protected so we need to authenticate
+          // either with the authToken if we are not the revoking the token use for the actual session authentication
+          // If we are revoking an other token the actual session's token should be contained in authToken
           Authorization: `Bearer ${authToken || tokenToRevoke}`,
         }
       });
 
     }
 
+    // If logOutUser is set to tru we log the user out of the app
     if (logOutUser) {
 
       // Remove token from local storage
