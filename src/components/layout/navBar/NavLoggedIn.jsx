@@ -11,7 +11,8 @@ const Div = styled.div`
 // The navbar shown if you are logged in
 const LoggedIn = () => {
 
-  const { logOut, token } = useContext(AuthContext);
+  const { logOut, authToken } = useContext(AuthContext);
+  const { token } = authToken;
 
   return (
     <Div>
@@ -20,7 +21,13 @@ const LoggedIn = () => {
           Profile
         </NavLink>
       </Link>
-      <NavLink onClick={async () => logOut(token, true)}>
+      <NavLink onClick={() => logOut(
+        {
+          tokenToRevoke: token,
+          logOutUser   : true,
+        }
+      )}
+      >
         Logout
       </NavLink>
     </Div>
