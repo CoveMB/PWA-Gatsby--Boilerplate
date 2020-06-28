@@ -1,26 +1,42 @@
 import SEO from 'components/layout/Seo';
 import useHttp from 'hooks/http';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useStore } from 'store/useStore';
 import { PageTitle } from 'styles/texts';
 import TokenList from './TokensList/TokenList';
 
-// Query all users and all tokens
-const query = `
-  query {
-      tokens(orderBy: id) {
-        id
-        device
-        token
-      }
-    }`;
-
 const Profile = () => {
 
   const { user } = useStore()[0];
-  const { httpData } = useHttp({
-    url: '/graphql', method: 'POST', body: { query }
-  });
+  const { httpData, sendRequest } = useHttp();
+
+  useEffect(() => {
+
+    (async () => {
+
+      if (user.email) {
+
+        // Query the user
+        const query = `
+          query {
+            user(email: "${user.email}"){
+              tokens(orderBy: id) {
+                id
+                device
+                token
+              }
+            }
+          }`;
+
+        sendRequest({
+          url: '/graphql', method: 'POST', body: { query }
+        });
+
+      }
+
+    })();
+
+  }, [ sendRequest, user.email ]);
 
   return (
     <>
@@ -30,7 +46,7 @@ const Profile = () => {
         {' '}
         {user.email}
       </PageTitle>
-      <TokenList tokens={httpData.data && httpData.data.tokens} />
+      <TokenList tokens={httpData.data && httpData.data.user.tokens} />
     </>
 
   );

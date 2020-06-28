@@ -11,6 +11,6 @@ export const button = css`
   justify-content: center;
   align-items: center;
   border: none;
-  height: 40px;
+  padding: 8px 12px;
   cursor: pointer;
 `;
