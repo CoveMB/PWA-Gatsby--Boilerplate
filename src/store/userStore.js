@@ -1,7 +1,7 @@
 import { initStore } from './useStore';
 
 // Configure here actions for user store
-const configureRefStore = () => {
+const configureUserStore = () => {
 
   const actions = {
     SET_USER: (currentState, user) => ({
@@ -14,4 +14,4 @@ const configureRefStore = () => {
 
 };
 
-export default configureRefStore;
+export { configureUserStore };

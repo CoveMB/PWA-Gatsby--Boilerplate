@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import { secondColor } from 'styles/colors';
-import { ErrorFeedBack, FormTitle, InputButton, Label, SuccessFeedBack } from 'styles/form';
+import { ErrorFeedBack, Form, FormTitle, InputButton, Label, SuccessFeedBack } from 'styles/form';
 
 Modal.setAppElement('#___gatsby');
 const customStyles = {
@@ -25,13 +25,6 @@ const customStyles = {
   }
 };
 
-const Div = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px
-`;
-
 const TitleDiv = styled.div`
   display: flex;
   justify-content: space-around;
@@ -46,9 +39,7 @@ const SignUpModal = ({
   authModalOpen, setAuthAction, authAction, actions
 }) => {
 
-  const {
-    register, handleSubmit, errors, getValues
-  } = useForm();
+  const { register, handleSubmit, errors } = useForm();
   const {
     isLoading, httpError, sendRequest, clearHttpState
   } = useHttp();
@@ -59,13 +50,19 @@ const SignUpModal = ({
   const closeAuthModal = () => {
 
     setAuthAction({ authModalOpen: false });
+    setSuccessFeedBack('');
     clearHttpState();
 
   };
 
-  // If the request is successful set the the new token and user
-  const storeTokenIfSuccess = ({ data, status }) => {
+  const loginUser = async (userInfo) => {
 
+    // Send logIn request
+    const { data, status } = await sendRequest({
+      url: '/login', method: 'POST', body: userInfo
+    });
+
+    // If the request is successful set the the new token and user
     if (status === 200) {
 
       logIn(data);
@@ -74,31 +71,22 @@ const SignUpModal = ({
 
   };
 
-  const loginUser = async (userInfo) => {
-
-    // Send logIn request
-    const loginResponse = await sendRequest({
-      url: '/login', method: 'POST', body: userInfo
-    });
-
-    // If the request is successful set the the new token and user
-    storeTokenIfSuccess(loginResponse);
-
-  };
-
-  const registerNewUser = async ({ email, password }) => {
+  const registerNewUser = async ({ email }) => {
 
     // Send register request
-    const registerResponse = await sendRequest({
+    const { status } = await sendRequest({
       url   : '/users',
       method: 'POST',
       body  : {
-        email, password
+        email
       }
     });
 
-    // If the request is successful set the the new token and user
-    storeTokenIfSuccess(registerResponse);
+    if (status === 201) {
+
+      setSuccessFeedBack('Almost done, please verify your email and you\'re all set!');
+
+    }
 
   };
 
@@ -123,6 +111,7 @@ const SignUpModal = ({
     setAuthAction({
       authModalOpen: true, authAction: newAction
     });
+    setSuccessFeedBack('');
     clearHttpState();
 
   };
@@ -188,89 +177,68 @@ const SignUpModal = ({
           Log In
         </FormTitle>
       </TitleDiv>
-      <form onSubmit={handleSubmit(submitAuthAction)}>
-        <Div>
-
-          {/* email input */}
-          <Label htmlFor="email">Email:</Label>
-          <input
-            name="email"
-            placeholder="Email"
-            ref={register({
-              required: 'An email is required',
-              pattern : {
-                value  : emailRegEx,
-                message: 'Please register a valid email address',
-              },
-            })}
-          />
-          {/* Error feedback for email */}
-          <ErrorFeedBack>{errors.email && errors.email.message}</ErrorFeedBack>
-
-          {/* If the auth action is signup or login add a password input */}
-          {(authAction === SIGNUP || authAction === LOGIN)
+      <Form onSubmit={handleSubmit(submitAuthAction)}>
+        {!successFeedBack
           && (
             <>
-              <Label htmlFor="password">Password:</Label>
+              {/* email input */}
+              <Label htmlFor="email">Email:</Label>
               <input
-                name="password"
-                placeholder="Password"
-                type="password"
+                name="email"
+                placeholder="Email"
                 ref={register({
-                  required : 'A password is required',
-                  maxLength: {
-                    value  : 80,
-                    message: 'A password should be no more than 80 character long'
+                  required: 'An email is required',
+                  pattern : {
+                    value  : emailRegEx,
+                    message: 'Please register a valid email address',
                   },
-                  minLength: {
-                    value  : 8,
-                    message: 'A password should be at least 8 character long'
-                  }
                 })}
               />
-              <ErrorFeedBack>{errors.password && errors.password.message}</ErrorFeedBack>
+              {/* Error feedback for email */}
+              <ErrorFeedBack>{errors.email && errors.email.message}</ErrorFeedBack>
+
+              {/* If the auth action is signup or login add a password input */}
+              {authAction === LOGIN && (
+                <>
+                  <Label htmlFor="password">Password:</Label>
+                  <input
+                    name="password"
+                    placeholder="Password"
+                    type="password"
+                    ref={register({
+                      required : 'A password is required',
+                      maxLength: {
+                        value  : 80,
+                        message: 'A password should be no more than 80 character long'
+                      },
+                      minLength: {
+                        value  : 8,
+                        message: 'A password should be at least 8 character long'
+                      }
+                    })}
+                  />
+                  <ErrorFeedBack>{errors.password && errors.password.message}</ErrorFeedBack>
+                </>
+              )}
+
+              {/* If the auth action is login ass a password reset option */}
+              {authAction === LOGIN && (
+                <>
+                  <PasswordResetRequest onClick={() => switchAuthAction(PASSWORD_RESET)}>Forgot your password ? </PasswordResetRequest>
+                </>
+              ) }
             </>
           )}
 
-          {/* If the auth action is signup add a password validation input */}
-          {authAction === SIGNUP && (
-            <>
-              <Label htmlFor="passwordRepeat">Repeat Password:</Label>
-              <input
-                name="passwordRepeat"
-                type="password"
-                ref={register({
-                  required: 'Please confirm your password',
-                  validate: (value) => {
+        <ErrorFeedBack>{httpError && httpError}</ErrorFeedBack>
+        <SuccessFeedBack>{successFeedBack && successFeedBack}</SuccessFeedBack>
 
-                    const { password } = getValues();
-
-                    return value === password || 'Passwords should match!';
-
-                  },
-                })}
-              />
-              <ErrorFeedBack>{errors.passwordRepeat && errors.passwordRepeat.message}</ErrorFeedBack>
-            </>
-          ) }
-
-          {/* If the auth action is login ass a password reset option */}
-          {authAction === LOGIN && (
-            <>
-              <PasswordResetRequest onClick={() => switchAuthAction(PASSWORD_RESET)}>Forgot your password ? </PasswordResetRequest>
-            </>
-          ) }
-
-          <ErrorFeedBack>{httpError && httpError}</ErrorFeedBack>
-          <SuccessFeedBack>{successFeedBack && successFeedBack}</SuccessFeedBack>
-
-          {isLoading
-            ? <Loading />
-            : (
-              <InputButton value={getSubmitBtnText()} />
-            )}
-        </Div>
-      </form>
+        {isLoading
+          ? <Loading />
+          : !successFeedBack && (
+            <InputButton value={getSubmitBtnText()} />
+          )}
+      </Form>
     </Modal>
   );
 

@@ -7,7 +7,7 @@ import TokenList from './TokensList/TokenList';
 
 const Profile = () => {
 
-  const { user } = useStore()[0];
+  const [ { user, userData }, dispatch ] = useStore();
   const { httpData, sendRequest } = useHttp();
 
   useEffect(() => {
@@ -19,24 +19,30 @@ const Profile = () => {
         // Query the user
         const query = `
           query {
-            user(email: "${user.email}"){
+            user(uuid: "${user.uuid}"){
               tokens(orderBy: id) {
-                id
                 device
                 token
               }
             }
           }`;
 
-        sendRequest({
+        const { data } = await sendRequest({
           url: '/graphql', method: 'POST', body: { query }
         });
+
+        dispatch('UPDATE_USER_DATA', { tokens: data.data.user.tokens });
 
       }
 
     })();
 
-  }, [ sendRequest, user.email ]);
+  }, [
+    sendRequest,
+    user.email,
+    user.uuid,
+    dispatch
+  ]);
 
   return (
     <>
@@ -46,7 +52,7 @@ const Profile = () => {
         {' '}
         {user.email}
       </PageTitle>
-      <TokenList tokens={httpData.data && httpData.data.user.tokens} />
+      <TokenList />
     </>
 
   );

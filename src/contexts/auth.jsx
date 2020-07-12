@@ -70,7 +70,7 @@ const AuthContextProvider = ({ children }) => {
 
     if (user) {
 
-      // Set the user un the app store
+      // Set the user in the app store
       dispatch('SET_USER', user);
 
     }

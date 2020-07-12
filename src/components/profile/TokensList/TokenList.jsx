@@ -1,14 +1,15 @@
 import { AuthContext } from 'contexts/auth';
 import useHttp from 'hooks/http';
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
+import { useStore } from 'store/useStore';
 import styled from 'styled-components';
 import { button } from 'styles/button';
+import { card } from 'styles/cards';
 import { successColor } from 'styles/colors';
 
 const TokenListDiv = styled.div`
-box-shadow: 0 6px 10px 0 rgba(0,0.1,0.2,0.3);
-padding: 1px 26px;
+${card}
 width: 35%
 `;
 
@@ -41,16 +42,34 @@ justify-content: space-around;
 align-items: center
 `;
 
-const TokenList = ({ tokens }) => {
+const TokenList = () => {
 
   const { logOut, authToken } = useContext(AuthContext);
   const { sendRequest } = useHttp();
+  const [ { userData }, dispatch ] = useStore();
+
+  useEffect(() => {
+
+    console.log(userData);
+
+  }, [ userData ]);
+
+  const revokeToken = (tokenToRevoke, registeredAuthToken) => {
+
+    logOut({
+      tokenToRevoke,
+      authToken: registeredAuthToken
+    });
+
+    dispatch('UPDATE_USER_DATA', { tokens: userData.tokens.filter((token) => token.token !== tokenToRevoke) });
+
+  };
 
   return (
     <TokenListDiv>
       <TokenListTitle>Where you are connected: </TokenListTitle>
-      {tokens.map((token) => (
-        <TokenDiv key={token.id}>
+      {userData.tokens.map((token) => (
+        <TokenDiv key={token.token}>
           <TokenTitle
             active={token.token === authToken.token}
           >
@@ -59,12 +78,7 @@ const TokenList = ({ tokens }) => {
           </TokenTitle>
           <RevokeButton
             type="button"
-            onClick={() => logOut(
-              {
-                tokenToRevoke: token.token,
-                authToken    : authToken.token
-              }
-            )}
+            onClick={() => revokeToken(token.token, authToken.token)}
           >
             Logout
           </RevokeButton>

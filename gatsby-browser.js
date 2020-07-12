@@ -1,10 +1,11 @@
 import AuthContextProvider from 'contexts/auth';
 import PropTypes from 'prop-types';
 import React from 'react';
-import configureRefStore from 'store/userStore';
+import { configureUserDataStore, configureUserStore } from 'store';
 
 // Configure stores
-configureRefStore();
+configureUserStore();
+configureUserDataStore();
 
 // Wrap the app in the AuthContext
 export const wrapRootElement = ({ element }) => (

@@ -39,3 +39,10 @@ export const InputButton = styled.input.attrs(({ value }) => ({
   ${button}
   margin-top: 20px;
 `;
+
+export const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px
+`;
