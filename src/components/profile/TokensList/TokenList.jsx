@@ -1,6 +1,5 @@
 import { AuthContext } from 'contexts/auth';
 import useHttp from 'hooks/http';
-import PropTypes from 'prop-types';
 import React, { useContext, useEffect } from 'react';
 import { useStore } from 'store/useStore';
 import styled from 'styled-components';
@@ -93,14 +92,6 @@ const TokenList = () => {
     </TokenListDiv>
   );
 
-};
-
-TokenList.propTypes = {
-  tokens: PropTypes.arrayOf(PropTypes.object),
-};
-
-TokenList.defaultProps = {
-  tokens: [],
 };
 
 export default TokenList;

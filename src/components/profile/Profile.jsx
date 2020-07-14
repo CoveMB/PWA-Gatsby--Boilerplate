@@ -17,7 +17,7 @@ const Profile = () => {
       if (user.email) {
 
         // Query the user
-        const query = `
+        const query = /* GraphQL */`
           query {
             user(uuid: "${user.uuid}"){
               tokens(orderBy: id) {

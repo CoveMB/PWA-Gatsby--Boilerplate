@@ -2,33 +2,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "components/*": [
-        "./src/components/*"
+      "*": [
+        "./src/*"
       ],
       "shared/*": [
         "./src/components/shared/*"
       ],
-      "config/*": [
-        "./src/config/*"
-      ],
-      "contexts/*": [
-        "./src/contexts/*"
-      ],
-      "hooks/*": [
-        "./src/hooks/*"
-      ],
-      "images/*": [
-        "./src/images/*"
-      ],
-      "store/*": [
-        "./src/store/*"
-      ],
       "sw/*": [
         "./src/service-worker/*"
       ],
-      "styles/*": [
-        "./src/styles/*"
-      ]
     }
   }
 }

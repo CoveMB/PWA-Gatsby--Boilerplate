@@ -55,7 +55,7 @@ export const useStore = (shouldListen = true) => {
 };
 
 // Init the store
-export const initStore = (userActions, initialState) => {
+export const initStore = (storeActions, initialState) => {
 
   if (initialState) {
 
@@ -68,7 +68,7 @@ export const initStore = (userActions, initialState) => {
 
   // Merges actions from all stores
   actions = {
-    ...actions, ...userActions
+    ...actions, ...storeActions
   };
 
 };
