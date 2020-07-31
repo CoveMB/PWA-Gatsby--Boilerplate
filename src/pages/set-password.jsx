@@ -1,5 +1,6 @@
 import Layout from 'components/layout/Layout';
 import SEO from 'components/layout/Seo';
+import GoogleLoginButton from 'components/layout/navBar/authModal/GoogleLoginButton';
 import Loading from 'components/shared/Loading';
 import { AuthContext } from 'contexts/auth';
 import { navigate } from 'gatsby';
@@ -16,6 +17,11 @@ const Card = styled.div`
 ${card}
 margin: auto;
 width: 50%
+`;
+
+export const Header = styled.h2`
+  text-align: center;
+  margin: 60px 0 60px 0
 `;
 
 const Input = styled.input`
@@ -126,6 +132,12 @@ const SetPassword = ({ location }) => {
             )}
         </Form>
       </Card>
+
+      <Header>Or Login with Google</Header>
+      <GoogleLoginButton
+        redirect
+        redirectTo="/app/profile"
+      />
 
     </Layout>
   );

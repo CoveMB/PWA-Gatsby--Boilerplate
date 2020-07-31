@@ -9,6 +9,7 @@ import Modal from 'react-modal';
 import styled from 'styled-components';
 import { secondColor } from 'styles/colors';
 import { ErrorFeedBack, Form, FormTitle, InputButton, Label, SuccessFeedBack } from 'styles/form';
+import GoogleLoginButton from './GoogleLoginButton';
 
 Modal.setAppElement('#___gatsby');
 const customStyles = {
@@ -33,6 +34,12 @@ const TitleDiv = styled.div`
 const PasswordResetRequest = styled.p`
   color: ${secondColor};
   cursor: pointer
+`;
+
+const TextSeparator = styled.div`
+  margin-top: 35px;
+  display: flex;
+  justify-content: space-around
 `;
 
 const SignUpModal = ({
@@ -177,6 +184,12 @@ const SignUpModal = ({
           Log In
         </FormTitle>
       </TitleDiv>
+      {authAction === SIGNUP
+      && (
+        <TextSeparator>
+          Or get a magic link
+        </TextSeparator>
+      )}
       <Form onSubmit={handleSubmit(submitAuthAction)}>
         {!successFeedBack
           && (
