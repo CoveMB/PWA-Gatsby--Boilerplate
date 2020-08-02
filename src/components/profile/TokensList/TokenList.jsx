@@ -5,12 +5,8 @@ import { useStore } from 'store/useStore';
 import styled from 'styled-components';
 import { button } from 'styles/button';
 import { card } from 'styles/cards';
+import Card from 'components/shared/Card';
 import { successColor } from 'styles/colors';
-
-const TokenListDiv = styled.div`
-${card}
-width: 35%
-`;
 
 const RevokeButton = styled.div`
 ${button}
@@ -19,12 +15,6 @@ ${button}
 const RevokeAllButton = styled.div`
 ${button}
 margin: 20px auto 15px auto
-`;
-
-const TokenListTitle = styled.p`
-  font-size: 2em;
-  text-align: center;
-  font-weight: bold
 `;
 
 const TokenTitle = styled.p`
@@ -65,8 +55,12 @@ const TokenList = () => {
   };
 
   return (
-    <TokenListDiv>
-      <TokenListTitle>Where you are connected: </TokenListTitle>
+    <Card
+      title="Where you are connected:"
+      style={{
+        width: '35%'
+      }}
+    >
       {userData.tokens.map((token) => (
         <TokenDiv key={token.token}>
           <TokenTitle
@@ -89,7 +83,7 @@ const TokenList = () => {
       >
         Logout All
       </RevokeAllButton>
-    </TokenListDiv>
+    </Card>
   );
 
 };
