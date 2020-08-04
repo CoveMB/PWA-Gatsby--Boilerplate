@@ -14,10 +14,12 @@ const CardTitle = styled.p`
   font-weight: bold
 `;
 
-export default function Card({ children, title, style }) {
+export default function Card({
+  children, title, style, onClick
+}) {
 
   return (
-    <CardDiv style={style}>
+    <CardDiv style={style} onClick={onClick}>
       <CardTitle>{title}</CardTitle>
       {children}
     </CardDiv>
@@ -28,6 +30,8 @@ export default function Card({ children, title, style }) {
 Card.propTypes = {
   children: PropTypes.node.isRequired,
   title   : PropTypes.string,
+  // eslint-disable-next-line react/require-default-props
+  onClick : PropTypes.func,
   // eslint-disable-next-line react/forbid-prop-types
   style   : PropTypes.object
 };
