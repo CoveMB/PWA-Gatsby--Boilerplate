@@ -5,3 +5,5 @@ export const isLocation = (location) => isBrowser() && window.location.pathname.
 export const runInBrowser = (callback) => isBrowser() && callback();
 
 export const accessInBrowser = (access) => isBrowser() && access;
+
+export const accessObjectInBrowser = (objectToAccess, key) => isBrowser() && objectToAccess[key];
