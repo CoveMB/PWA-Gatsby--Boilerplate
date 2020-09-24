@@ -1,6 +1,7 @@
 import AuthContextProvider from 'contexts/auth';
 import PropTypes from 'prop-types';
 import React from 'react';
+import 'config/config-csrf';
 import { configureUserDataStore, configureUserStore } from 'store';
 
 // Configure stores

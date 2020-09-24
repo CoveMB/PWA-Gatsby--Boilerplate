@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "module": "commonjs",
+    "target": "esnext",
+    "allowJs": true,
+    "checkJs": true,
+    "jsx": "preserve",
+    "strict": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noUnusedLocals": false,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./src/*"
+      ],
+      "shared/*": [
+        "./src/components/shared/*"
+      ],
+      "sw/*": [
+        "./src/service-worker/*"
+      ],
+    },
+    "typeRoots": [
+      "./src/types",
+      "node_modules/@types"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "./node_modules",
+    "public",
+    "./public",
+    ".cache",
+    "./.cache"
+  ]
+}
