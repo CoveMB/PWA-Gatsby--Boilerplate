@@ -5,6 +5,7 @@ module.exports = {
     author     : 'Benjamin Marquis',
   },
   plugins: [
+    'gatsby-plugin-netlify',
 
     // Allow use styled components
     'gatsby-plugin-styled-components',
@@ -53,8 +54,7 @@ module.exports = {
       options: {
         precachePages: [ '//' ],
         workboxConfig: {
-          globPatterns: [ '**/*' ],
-          globIgnores : [ '/_redirect/', '/_headers/' ]
+          globPatterns: [ '**/*' ]
         }
       },
     },
@@ -62,9 +62,5 @@ module.exports = {
       resolve: 'gatsby-plugin-create-client-paths',
       options: { prefixes: [ '/app/*' ] },
     },
-
-    // Plugin to add Netlify redirects
-    'gatsby-plugin-netlify',
-    'gatsby-plugin-netlify-cache'
   ],
 };

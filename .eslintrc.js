@@ -1,99 +1,30 @@
 module.exports = {
-  "parserOptions": {
-    "ecmaVersion": 10,
-    "parser": "@typescript-eslint/parser",
-    "project": "./tsconfig.json"
+  parserOptions: {
+    ecmaVersion: 10,
+    parser: "babel-eslint"
   },
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "airbnb-typescript",
+  extends: [
+    "airbnb",
+    "airbnb/hooks"
   ],
-  "plugins": [
-    "@typescript-eslint",
+  plugins: [
+    'eslint-plugin',
     "react"
   ],
-  "settings": {
-    "import/parsers": {
-      "@typescript-eslint/parser": [
-        ".ts",
-        ".tsx",
-        
-      ]
-    },
+  settings: {
     "import/extensions": [
       ".jsx",
       ".js",
-      ".ts",
-      ".tsx",
     ],
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".js",
-          ".ts",
-          ".jsx",
-          ".tsx"
-        ],
-        "moduleDirectory": [
-          "node_modules",
-          "./src"
-        ]
-      }
+        "extensions": ['.js', '.jsx'],
+        "moduleDirectory": ['node_modules', './src']
+      },
     }
   },
   "rules": {
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ],
-    "no-cycle": "off",
-    "react/prop-types": "off",
-    // Typescript
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
-      }
-    ],
-    "@typescript-eslint/lines-between-class-members": [
-      "warn",
-      {
-        "exceptAfterOverload": true
-      }
-    ],
-    "@typescript-eslint/type-annotation-spacing": [
-      "warn",
-      {
-        "before": false,
-        "after": true,
-        "overrides": {
-          "arrow": {
-            "before": true,
-            "after": true
-          },
-          "colon": {
-            "before": false,
-            "after": true
-          }
-        }
-      }
-    ],
-    "indent": "off",
-    "@typescript-eslint/indent": [
-      "warn"
-    ],
-    "comma-spacing": "off",
-    "@typescript-eslint/comma-spacing": [
-      "warn"
-    ],
-    // length
+    "no-extraneous-dependencies": "off",
     "max-len": [
       "warn",
       {
@@ -104,31 +35,18 @@ module.exports = {
         "ignoreTemplateLiterals": true
       }
     ],
+    // "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
     "no-console": "off",
-    "no-unused-vars": "off",
     "quotes": [
       "warn",
       "single"
     ],
     // Spacing
-    "react/jsx-max-props-per-line": 1,
-    "react/jsx-closing-bracket-location": [
-      1,
-      "tag-aligned"
-    ],
     "space-in-parens": "warn",
     "keyword-spacing": "warn",
     "no-trailing-spaces": "warn",
     "space-before-blocks": "warn",
-    "space-before-function-paren": [
-      "warn",
-      {
-        "anonymous": "always",
-        "named": "never",
-        "asyncArrow": "always"
-      }
-    ],
     "key-spacing": [
       "warn",
       {
@@ -146,13 +64,10 @@ module.exports = {
       }
     ],
     // Padding
-    "lines-around-comment": [
-      "warn",
-      {
-        "beforeBlockComment": true,
-        "beforeLineComment": true
-      }
-    ],
+    "lines-around-comment": ["warn", { 
+      "beforeBlockComment": true, 
+      "beforeLineComment": true 
+    }],
     "eol-last": "warn",
     "no-empty": "warn",
     "no-multiple-empty-lines": "warn",
@@ -217,6 +132,18 @@ module.exports = {
         "omitLastInOneLineBlock": false
       }
     ],
+    "indent": [
+      "warn",
+      2,
+      {"SwitchCase": 1}
+    ],
+    "comma-spacing": [
+      "warn",
+      {
+        "before": false,
+        "after": true
+      }
+    ],
     // Object rules
     "object-curly-spacing": [
       "warn",
@@ -228,23 +155,15 @@ module.exports = {
         "ObjectPattern": {
           "multiline": true,
           "minProperties": 4,
-          "consistent": true
+          "consistent": true 
         },
         "ObjectExpression": {
           "multiline": true,
           "minProperties": 2,
-          "consistent": true
+          "consistent": true 
         },
-        "ImportDeclaration": {
-          "multiline": true,
-          "minProperties": 4,
-          "consistent": true
-        },
-        "ExportDeclaration": {
-          "multiline": true,
-          "minProperties": 4,
-          "consistent": true
-        }
+        "ImportDeclaration": "never",
+        "ExportDeclaration": "never"
       }
     ],
     // Array rules
@@ -265,11 +184,11 @@ module.exports = {
         "multiline": true,
         "minItems": 3
       }
-    ]
+    ],
+    "jsx-a11y/label-has-associated-control":  "off",
   },
-  "env": {
-    "node": false,
-    "browser": true,
-    "jest": true
+  env: {
+    "node": true,
+    "browser": true
   },
-};
+}
